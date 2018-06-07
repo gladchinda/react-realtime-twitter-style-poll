@@ -1,0 +1,29 @@
+{
+  "name": "react-realtime-twitter-style-poll",
+  "version": "1.0.0",
+  "description": "Build a realtime Twitter style poll with Next.js and Pusher.",
+  "scripts": {
+    "dev": "node server.js",
+		"build": "next build",
+		"prod:server": "cross-env NODE_ENV=production node server.js",
+		"start": "npm-run-all -s build prod:server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gladchinda/react-realtime-twitter-style-poll.git"
+  },
+  "keywords": [
+		"realtime",
+		"nextjs",
+		"pusher",
+		"react",
+		"poll",
+		"twitter"
+	],
+  "author": "Glad Chinda <gladxeqs@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gladchinda/react-realtime-twitter-style-poll/issues"
+  },
+  "homepage": "https://github.com/gladchinda/react-realtime-twitter-style-poll#readme"
+}
