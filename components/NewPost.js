@@ -1,34 +1,40 @@
+import axios from 'axios';
 import React, { Component } from 'react';
 import PollDurationAndChoices from './PollDurationAndChoices';
 
 const MAX_POST_LENGTH = 140;
+const INITIAL_POLL = { duration: null, choices: null };
 
 class NewPost extends Component {
 
-	state = { hasPoll: false, post: '', postHeight: 0, canSubmitPoll: false }
+	state = { hasPoll: false, post: '', postHeight: 0, poll: INITIAL_POLL }
 
-	togglePoll = evt => {
-		this.setState({ hasPoll: !this.state.hasPoll, canSubmitPoll: false });
-	}
+	togglePoll = evt => this.setState({ hasPoll: !this.state.hasPoll, poll: INITIAL_POLL })
 
-	updatePostHeight = () => {
-		const postHeight = this.post.scrollHeight;
-		this.setState({ postHeight });
-	}
+	updatePostHeight = () => this.setState({ postHeight: this.post.scrollHeight })
 
 	handlePostUpdate = evt => {
 		const post = evt.target.value;
 		(post.length <= MAX_POST_LENGTH) && this.setState({ post }, this.updatePostHeight);
 	}
 
+	onPollUpdated = ({ duration, choices }) => {
+		const { ...currentPoll } = this.state.poll;
+		this.setState({ poll: { ...currentPoll, duration, choices } });
+	}
+
 	canSubmit = () => {
-		const { hasPoll, post, canSubmitPoll } = this.state;
+		const { hasPoll, post, poll: { duration, choices } } = this.state;
+		const canSubmitPoll = duration && choices && (choices.filter(choice => !choice).length === 0);
+
 		return !post ? false : hasPoll ? canSubmitPoll : true;
 	}
 
-	onPollUpdated = ({ duration, choices }) => {
-		const canSubmitPoll = duration && choices && (choices.filter(choice => !choice).length === 0);
-		this.setState({ canSubmitPoll });
+	handleSubmit = () => {
+		const { post, hasPoll: poll, poll: { duration, choices } } = this.state;
+		const data = { post, poll, choices, duration };
+
+		console.log(data);
 	}
 
 	componentDidMount() {
@@ -60,9 +66,7 @@ class NewPost extends Component {
 
 				{ hasPoll && <PollDurationAndChoices onPollUpdated={this.onPollUpdated} /> }
 
-				{ this.canSubmit() && <button className="btn btn-info font-weight-bold text-uppercase mt-5" style={{ height: 48, borderRadius: 24, lineHeight: 1, width: 160 }} onClick={this.updateDuration}>
-					{ `Create ${type}` }
-				</button> }
+				{ this.canSubmit() && <button className="btn btn-info font-weight-bold text-uppercase mt-5" style={{ height: 48, borderRadius: 24, lineHeight: 1, width: 160 }} onClick={this.handleSubmit}> { `Create ${type}` }</button> }
 
 			</div>
 		);

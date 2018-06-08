@@ -1,4 +1,3 @@
-import moment from 'moment';
 import React, { Component } from 'react';
 
 const INITIAL_CHOICES = [null, null];
@@ -79,7 +78,7 @@ class PollDurationAndChoices extends Component {
 						{ POLL_DURATIONS.map((duration, index) => {
 							const currentDuration = duration === this.state.duration;
 
-							return <button key={index} className={`btn mr-2 font-weight-bold ${currentDuration ? 'btn-primary' : 'btn-secondary'}`} disabled={currentDuration} style={{ height: 36, borderRadius: 18, fontSize: '0.75rem', lineHeight: 1, width: 75 }} onClick={this.updateDuration(duration)}>
+							return <button key={index} className={`btn mr-2 my-2 font-weight-bold ${currentDuration ? 'btn-primary' : 'btn-secondary'}`} disabled={currentDuration} style={{ height: 36, borderRadius: 18, fontSize: '0.75rem', lineHeight: 1, width: 75 }} onClick={this.updateDuration(duration)}>
 								{ duration % 60 ? `${duration} ${duration > 1 ? 'mins' : 'min'}` : `${duration / 60} hour` }
 							</button>
 						}) }
