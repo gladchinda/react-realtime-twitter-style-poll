@@ -7,7 +7,7 @@ import ChoosePersona from '../components/ChoosePersona';
 
 class IndexPage extends Component {
 
-	state = { id: null, people: [] }
+	state = { id: null, people: [], posts: [] }
 
 	personaSelected = id => this.setState({ id })
 
@@ -19,10 +19,23 @@ class IndexPage extends Component {
 
 		this.channel = this.pusher.subscribe('twitter-poll-app');
 
-		axios.get('/api/users').then(({ data }) => {
-			const { users: people = [] } = data;
-			this.setState({ people });
+		this.pusher.connection.bind('connected', () => {
+
+			axios.get('/api/users').then(({ data }) => {
+				const { users: people = [] } = data;
+				this.setState({ people });
+			});
+
+			axios.get('/api/posts').then(({ data }) => {
+				const { posts = [] } = data;
+				this.setState({ posts });
+			});
+
 		});
+	}
+
+	componentWillUnmount() {
+		this.pusher.disconnect();
 	}
 
 	render() {
