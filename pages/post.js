@@ -8,7 +8,7 @@ export default () => (
 		<div className="container-fluid position-absolute h-100">
 
 			<div className="position-absolute w-100 bg-white" style={{ left: 20, top: 30, zIndex: 100 }}>
-				<Link prefetch href="/" passHref>
+				<Link prefetch replace passHref href="/">
 					<button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0" style={{ textDecoration: 'none', fontSize: '0.9rem' }}>Back to Posts</button>
 				</Link>
 			</div>

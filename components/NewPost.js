@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Router from 'next/router';
 import React, { Component } from 'react';
 import PollDurationAndChoices from './PollDurationAndChoices';
 
@@ -35,6 +36,7 @@ class NewPost extends Component {
 		const data = { post, poll, choices, duration };
 
 		console.log(data);
+		Router.replace('/');
 	}
 
 	componentDidMount() {
