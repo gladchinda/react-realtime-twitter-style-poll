@@ -53,7 +53,7 @@ app.prepare()
 		server.use(bodyParser.urlencoded({ extended: true }));
 
 		server.get('/api/users', (req, res) => {
-			return res.json({ status: 'success', count: __USERS__.length, posts: __USERS__ });
+			return res.json({ status: 'success', count: __USERS__.length, users: __USERS__ });
 		});
 
 		server.get('/api/posts', (req, res) => {
