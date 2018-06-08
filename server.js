@@ -29,21 +29,28 @@ app.prepare()
 
 		const server = express();
 
-		let __USERS__ = [];
-		let __POSTS__ = [];
-
-		server.use(logger('dev'));
-		server.use(bodyParser.json());
-		server.use(bodyParser.urlencoded({ extended: true }));
-
-		(() => {
+		const __USERS__ = (() => {
 			const people = [
 				'Stephanie', 'John', 'Steve', 'Anna', 'Margaret', 'Felix', 'Chris', 'Jamie',
 				'Rose', 'Bob', 'Vanessa', '9lad', 'Bridget', 'Sebastian', 'Richard'
 			];
 
-			__USERS__ = people.map(name => ({ name, id: uuid.v4() }));
+			return people.map(name => ({ name, id: uuid.v4() }));
 		})();
+
+		let __POSTS__ = [];
+
+		const finder = (value, field = 'id') => item => item[field] === value;
+
+		const getPostById = id => __POSTS__.find(finder(id));
+		const getUserById = id => __USERS__.find(finder(id));
+
+		const getPostIndexById = id => __POSTS__.findIndex(finder(id));
+		const getUserIndexById = id => __USERS__.findIndex(finder(id));
+
+		server.use(logger('dev'));
+		server.use(bodyParser.json());
+		server.use(bodyParser.urlencoded({ extended: true }));
 
 		server.get('/api/users', (req, res) => {
 			return res.json({ status: 'success', count: __USERS__.length, posts: __USERS__ });
@@ -54,10 +61,10 @@ app.prepare()
 		});
 
 		server.post('/api/posts', (req, res) => {
-			const { poll, post, duration, choices, creator } = req.body;
+			const { post, creator, poll = false, duration = null, choices = null } = req.body;
 
-			if (!(creator && _.isString(post))) {
-				return res.status(422).json({ status: 'failed', message: 'No post content.' });
+			if (!( creator && getUserById(creator) )) {
+				return res.status(422).json({ status: 'failed', message: 'Cannot resolve post creator.' });
 			}
 
 			if (!( post && _.isString(post) )) {
@@ -65,15 +72,16 @@ app.prepare()
 			}
 
 			const hasDuration = duration && _.isNumber(duration);
-			const hasChoices = choices && _.isArray(choices) && choices.length > 2;
+			const hasChoices = choices && _.isArray(choices) && choices.length >= 2;
 
-			if (!( poll && hasDuration && hasChoices )) {
+			if (poll && !( hasDuration && hasChoices )) {
 				return res.status(422).json({ status: 'failed', message: 'Invalid poll content.' });
 			}
 
 			const newPost = {
 				id: uuid.v4(),
 				created: moment().unix(),
+				votes: [],
 				post, poll, duration, choices, creator
 			};
 
@@ -81,6 +89,44 @@ app.prepare()
 			// trigger pusher update
 
 			return res.json({ status: 'success', post: newPost });
+		});
+
+		server.post('/api/posts/:postid/vote', (req, res) => {
+			const { postid } = req.params;
+			const { user, choice } = req.body;
+
+			const _user = getUserById(user);
+			const postIndex = getPostIndexById(postid);
+
+			if (!(postid && postIndex >= 0)) {
+				return res.status(422).json({ status: 'failed', message: 'Cannot resolve post.' });
+			}
+
+			if (!(user && _user)) {
+				return res.status(422).json({ status: 'failed', message: 'Cannot resolve user.' });
+			}
+
+			const post = __POSTS__[postIndex];
+
+			if (post.votes.findIndex(finder(user, 'user')) >= 0) {
+				return res.status(403).json({ status: 'failed', message: 'User already voted.' });
+			}
+
+			if (!( _.isNumber(choice) && choice >= 0 && choice < post.choices.length )) {
+				return res.status(422).json({ status: 'failed', message: 'Invalid post choice.' });
+			}
+
+			post.votes.push({ user, choice });
+
+			__POSTS__ = [
+				...(__POSTS__.slice(0, postIndex)),
+				post,
+				...(__POSTS__.slice(postIndex + 1))
+			];
+
+			// trigger pusher update
+
+			return res.json({ status: 'success', post, votes: post.votes.length });
 		});
 
 		server.get('*', (req, res) => {
