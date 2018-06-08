@@ -36,6 +36,19 @@ app.prepare()
 		server.use(bodyParser.json());
 		server.use(bodyParser.urlencoded({ extended: true }));
 
+		(() => {
+			const people = [
+				'Stephanie', 'John', 'Steve', 'Anna', 'Margaret', 'Felix', 'Chris', 'Jamie',
+				'Rose', 'Bob', 'Vanessa', '9lad', 'Bridget', 'Sebastian', 'Richard'
+			];
+
+			__USERS__ = people.map(name => ({ name, id: uuid.v4() }));
+		})();
+
+		server.get('/api/users', (req, res) => {
+			return res.json({ status: 'success', count: __USERS__.length, posts: __USERS__ });
+		});
+
 		server.get('/api/posts', (req, res) => {
 			return res.json({ status: 'success', count: __POSTS__.length, posts: __POSTS__ });
 		});
