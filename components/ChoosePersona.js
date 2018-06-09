@@ -36,7 +36,7 @@ const ChoosePersona = props => {
 	};
 
 	return (
-		<div className="w-100 h-100 px-3 pb-5 d-flex flex-wrap align-items-center align-content-center justify-content-center">
+		<div className="position-absolute w-100 h-100 px-3 pb-5 d-flex flex-wrap align-items-center align-content-center justify-content-center" style={{ top: 0, bottom: 0 }}>
 			<span className="h3 text-dark text-center py-3 w-100 font-weight-bold">Choose your Persona</span>
 			{randomPeople(count)(people)}
 		</div>

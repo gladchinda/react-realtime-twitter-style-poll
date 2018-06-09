@@ -17,7 +17,7 @@ const Poll = props => {
 	}
 
 	return <Fragment>
-		<div className="w-100 pt-2 pb-3 text-secondary font-weight-normal">
+		<div className="w-100 pt-2 pb-2 text-secondary font-weight-normal">
 			{ enableVoting
 
 				? choices.map((choice, index) => {
@@ -29,11 +29,13 @@ const Poll = props => {
 					const POSTID = `poll-response--radio--${postId}--${index}`
 
 					return (
-						<div key={index} className="custom-control custom-radio py-2 d-flex align-items-center">
+						<div key={index} className="custom-control custom-radio px-0 py-2 d-flex align-items-center">
 
 							<input className="custom-control-input" type="radio" name="poll-response" id={POSTID} value={choice} />
 
-							<label className={labelClass} htmlFor={POSTID} onClick={ handleVote(index) }>{choice}</label>
+							<label className={labelClass} htmlFor={POSTID} onClick={ handleVote(index) }>
+								<small>{choice}</small>
+							</label>
 
 						</div>
 					);
@@ -41,17 +43,21 @@ const Poll = props => {
 				})
 
 				: (totalVotes || null) && choices.map((choice, index) => {
-					const percentage = Math.floor(votes[index] / totalVotes * 100);
+
+					const percentage = votes[index] / totalVotes * 100;
+					const percentageForDisplay = percentage.toFixed(1).replace(/^(\d+)\.0$/, '$1');
 
 					return (
 						<div key={index} className="py-2 d-flex align-items-center">
-							<div className="d-flex justify-content-between align-items-center" style={{ width: '30%' }}>
-								<div className="w-50" style={{ height: 4 }}>
-									<div className="rounded bg-secondary" style={{ width: `${percentage}%`, height: 'inherit' }}></div>
+							<span className="w-50 d-inline-block position-relative"><small>{choice}</small></span>
+							<div className="w-50 d-flex justify-content-between align-items-center">
+								<div className="w-75 d-flex justify-content-end">
+									<div className="rounded" style={{ width: `${percentage}%`, height: 4, background: '#ddd' }}></div>
 								</div>
-								<span className="text-dark"><small>{ `${percentage}%` }</small></span>
+								<span className="d-inline-block text-dark mr-3">
+									<small className="align-text-top">{`${percentageForDisplay}%`}</small>
+								</span>
 							</div>
-							<span className="d-inline-block position-relative ml-5"><small>{choice}</small></span>
 						</div>
 					)
 				})
