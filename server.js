@@ -145,6 +145,10 @@ app.prepare()
 			return handler(req, res);
 		});
 
+		server.use((req, res) => {
+			return res.status(404).json({ status: 'failed', message: 'Requested resource not found.' });
+		});
+
 		server.listen(port, err => {
 			if (err) throw err;
 			console.log(`> Ready on http://localhost:${port}`);
