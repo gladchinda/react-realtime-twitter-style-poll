@@ -5,13 +5,19 @@ import React, { Component, Fragment } from 'react';
 import Layout from '../components/Layout';
 import ChoosePersona from '../components/ChoosePersona';
 
+const USER_STORAGE_KEY = '__app.user__';
+
 class IndexPage extends Component {
 
-	state = { id: null, people: [], posts: [] }
+	state = { user: null, people: [], posts: [] }
 
-	personaSelected = id => this.setState({ id })
+	personaSelected = user => this.setState({ user }, () => localStorage.setItem(USER_STORAGE_KEY, user))
 
 	componentDidMount() {
+
+		const user = localStorage.getItem(USER_STORAGE_KEY);
+		user && this.setState({ user });
+
 		this.pusher = new Pusher(process.env.PUSHER_APP_KEY, {
 			cluster: process.env.PUSHER_APP_CLUSTER,
 			encrypted: true
@@ -40,7 +46,7 @@ class IndexPage extends Component {
 
 	render() {
 		return <Fragment>
-			{ this.state.id
+			{ this.state.user
 
 				? <Fragment>
 					<h1 className="font-weight-light w-100 text-center mb-3">Realtime Twitter-Style Poll</h1>
@@ -50,7 +56,7 @@ class IndexPage extends Component {
 					</Link>
 				</Fragment>
 
-				: <ChoosePersona count={ 5 } people={this.state.people} onSelected={this.personaSelected} />
+				: <ChoosePersona count={5} people={this.state.people} onSelected={this.personaSelected} />
 			}
 		</Fragment>
 	}

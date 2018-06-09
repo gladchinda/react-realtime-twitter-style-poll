@@ -8,7 +8,7 @@ const INITIAL_POLL = { duration: null, choices: null };
 
 class NewPost extends Component {
 
-	state = { hasPoll: false, post: '', postHeight: 0, poll: INITIAL_POLL }
+	state = { user: null, hasPoll: false, post: '', postHeight: 0, poll: INITIAL_POLL }
 
 	togglePoll = evt => this.setState({ hasPoll: !this.state.hasPoll, poll: INITIAL_POLL })
 
@@ -32,15 +32,16 @@ class NewPost extends Component {
 	}
 
 	handleSubmit = () => {
-		const { post, hasPoll: poll, poll: { duration, choices } } = this.state;
-		const data = { post, poll, choices, duration };
+		const { user: creator = null, post, hasPoll: poll, poll: { duration, choices } } = this.state;
+		const data = { post, poll, choices, duration, creator };
 
-		console.log(data);
-		Router.replace('/');
+		axios.post(`/api/posts`, data)
+			.then(response => Router.replace('/'));
 	}
 
 	componentDidMount() {
-		this.updatePostHeight();
+		const { user = null } = this.props;
+		user && this.setState({ user }, this.updatePostHeight);
 	}
 
 	render() {

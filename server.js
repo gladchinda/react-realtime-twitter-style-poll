@@ -81,12 +81,13 @@ app.prepare()
 			const newPost = {
 				id: uuid.v4(),
 				created: moment().unix(),
-				votes: [],
+				votes: poll ? [] : null,
 				post, poll, duration, choices, creator
 			};
 
 			__POSTS__.push(newPost);
-			// trigger pusher update
+
+			pusher.trigger('twitter-poll-app', 'new-post', { post: newPost });
 
 			return res.json({ status: 'success', post: newPost });
 		});
@@ -102,11 +103,22 @@ app.prepare()
 				return res.status(422).json({ status: 'failed', message: 'Cannot resolve post.' });
 			}
 
+			const post = __POSTS__[postIndex];
+
+			if (post.poll) {
+				const { duration, created } = post;
+				const deadline = moment(created, 'X').add(duration, 'm');
+
+				if (deadline.isBefore()) {
+					return res.status(403).json({ status: 'failed', message: 'Poll duration already expired.' });
+				}
+			} else {
+				return res.status(403).json({ status: 'failed', message: 'Post is not a poll.' });
+			}
+
 			if (!(user && _user)) {
 				return res.status(422).json({ status: 'failed', message: 'Cannot resolve user.' });
 			}
-
-			const post = __POSTS__[postIndex];
 
 			if (post.votes.findIndex(finder(user, 'user')) >= 0) {
 				return res.status(403).json({ status: 'failed', message: 'User already voted.' });
@@ -124,7 +136,7 @@ app.prepare()
 				...(__POSTS__.slice(postIndex + 1))
 			];
 
-			// trigger pusher update
+			pusher.trigger('twitter-poll-app', 'new-vote', { posts: __POSTS__ });
 
 			return res.json({ status: 'success', post, votes: post.votes.length });
 		});
