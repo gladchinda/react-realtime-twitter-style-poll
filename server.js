@@ -29,13 +29,33 @@ app.prepare()
 
 		const server = express();
 
+		const __AVATARS__ = [
+			'https://i.imgur.com/IJOOGRW.png',
+			'https://i.imgur.com/R1UcN2u.png',
+			'https://i.imgur.com/q1iKHx9.png',
+			'https://i.imgur.com/cWIySBG.png',
+			'https://i.imgur.com/sheXC6x.png',
+			'https://i.imgur.com/oq0ZAdw.png',
+			'https://i.imgur.com/3pCgbMI.png',
+			'https://i.imgur.com/DX7Jzuu.png',
+			'https://i.imgur.com/Pn0IqpB.png',
+			'https://i.imgur.com/dsld01L.png',
+			'https://i.imgur.com/uTojCvX.png',
+			'https://i.imgur.com/4pkuNL6.png',
+			'https://i.imgur.com/hktwxP1.png',
+			'https://i.imgur.com/7cSADkB.png',
+			'https://i.imgur.com/2QgfsTg.png'
+		];
+
 		const __USERS__ = (() => {
+			const avatars = _.shuffle(__AVATARS__);
+
 			const people = [
 				'Stephanie', 'John', 'Steve', 'Anna', 'Margaret', 'Felix', 'Chris', 'Jamie',
 				'Rose', 'Bob', 'Vanessa', '9lad', 'Bridget', 'Sebastian', 'Richard'
 			];
 
-			return people.map(name => ({ name, id: uuid.v4() }));
+			return people.map((name, index) => ({ name, id: uuid.v4(), avatar: avatars[index] }));
 		})();
 
 		let __POSTS__ = [];
