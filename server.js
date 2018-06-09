@@ -107,9 +107,9 @@ app.prepare()
 
 			if (post.poll) {
 				const { duration, created } = post;
-				const deadline = moment(created, 'X').add(duration, 'm');
+				const expires = moment(created, 'X').add(duration, 'm');
 
-				if (deadline.isBefore()) {
+				if (expires.isBefore()) {
 					return res.status(403).json({ status: 'failed', message: 'Poll duration already expired.' });
 				}
 			} else {

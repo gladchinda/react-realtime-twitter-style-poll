@@ -2,10 +2,10 @@ import moment from 'moment';
 
 const USER_STORAGE_KEY = '__app.user__';
 const USER_SESSION_KEY = '__app.expires__';
-const USER_SESSION_DURATION_SECONDS = 60 * 15; // 15mins
+const USER_SESSION_DURATION_SECONDS = 60 * 15; // 15 mins
 
 export const initializeSession = user => {
-	const expires = moment().add(USER_SESSION_DURATION_SECONDS, 's').format('X');
+	const expires = `${moment().add(USER_SESSION_DURATION_SECONDS, 's').format('x')}`;
 
 	sessionStorage.setItem(USER_STORAGE_KEY, user);
 	sessionStorage.setItem(USER_SESSION_KEY, expires);
@@ -17,7 +17,7 @@ export const destroySession = () => {
 
 export const verifySessionActive = () => {
 	const session = sessionStorage.getItem(USER_SESSION_KEY);
-	const expired = moment(session).isBefore();
+	const expired = moment(+session).isBefore();
 
 	expired && destroySession();
 }
