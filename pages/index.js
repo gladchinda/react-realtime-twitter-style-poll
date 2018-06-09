@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Pusher from 'pusher-js';
 import React, { Component, Fragment } from 'react';
 import * as Session from '../helpers/session';
+
+import Post from '../components/Post';
 import Layout from '../components/Layout';
 import ChoosePersona from '../components/ChoosePersona';
 
@@ -46,13 +48,22 @@ class IndexPage extends Component {
 		return <Fragment>
 			{ this.state.user
 
-				? <Fragment>
-					<h1 className="font-weight-light w-100 text-center mb-3">Realtime Twitter-Style Poll</h1>
+				? ( this.state.posts.length > 0
 
-					<Link prefetch replace passHref href="/post">
-						<button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0" style={{ textDecoration: 'none', fontSize: '0.9rem' }}>New Post</button>
-					</Link>
-				</Fragment>
+						? <div className="align-self-start my-4" style={{ maxWidth: 640 }}>
+							{ this.state.posts.map((post, index) => {
+								return <Post key={index} user={this.state.user} people={this.state.people} post={post} />
+							}) }
+						</div>
+
+						: <Fragment>
+							<h1 className="font-weight-light w-100 text-center mb-3">Realtime Twitter-Style Poll</h1>
+
+							<Link prefetch replace passHref href="/post">
+								<button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0" style={{ textDecoration: 'none', fontSize: '0.9rem' }}>New Post</button>
+							</Link>
+						</Fragment>
+				)
 
 				: <ChoosePersona count={5} people={this.state.people} onSelected={this.personaSelected} />
 			}
