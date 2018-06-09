@@ -1,17 +1,16 @@
 import Link from 'next/link';
 import Router from 'next/router';
 import React, { Component, Fragment } from 'react';
+import * as Session from '../helpers/session';
 import Layout from '../components/Layout';
 import NewPost from '../components/NewPost';
-
-const USER_STORAGE_KEY = '__app.user__';
 
 class NewPostPage extends Component {
 
 	state = { user: null }
 
 	componentDidMount() {
-		const user = localStorage.getItem(USER_STORAGE_KEY);
+		const user = Session.getActiveUser();
 		if (!user) return Router.replace('/');
 
 		this.setState({ user });

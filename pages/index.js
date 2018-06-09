@@ -2,20 +2,18 @@ import axios from 'axios';
 import Link from 'next/link';
 import Pusher from 'pusher-js';
 import React, { Component, Fragment } from 'react';
+import * as Session from '../helpers/session';
 import Layout from '../components/Layout';
 import ChoosePersona from '../components/ChoosePersona';
-
-const USER_STORAGE_KEY = '__app.user__';
 
 class IndexPage extends Component {
 
 	state = { user: null, people: [], posts: [] }
 
-	personaSelected = user => this.setState({ user }, () => localStorage.setItem(USER_STORAGE_KEY, user))
+	personaSelected = user => this.setState({ user }, () => Session.initializeSession(user))
 
 	componentDidMount() {
-
-		const user = localStorage.getItem(USER_STORAGE_KEY);
+		const user = Session.getActiveUser();
 		user && this.setState({ user });
 
 		this.pusher = new Pusher(process.env.PUSHER_APP_KEY, {
