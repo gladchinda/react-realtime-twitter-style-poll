@@ -11,6 +11,7 @@ const Poll = props => {
 	const enableVoting = !(isExpired || voted);
 
 	const totalVotes = votes.reduce((sum, count) => sum + count, 0);
+	const maximumVote = Math.max(...votes);
 
 	const handleVote = choice => evt => {
 		axios.post(`/api/posts/${postId}/vote`, { user: user.id, choice })
@@ -45,6 +46,7 @@ const Poll = props => {
 				: (totalVotes || null) && choices.map((choice, index) => {
 
 					const percentage = votes[index] / totalVotes * 100;
+					const relativeWidth = Math.min(100, Math.ceil(votes[index] / maximumVote * 100));
 					const percentageForDisplay = percentage.toFixed(1).replace(/^(\d+)\.0$/, '$1');
 
 					return (
@@ -52,7 +54,7 @@ const Poll = props => {
 							<span className="w-50 d-inline-block position-relative"><small>{choice}</small></span>
 							<div className="w-50 d-flex justify-content-between align-items-center">
 								<div className="w-75 d-flex justify-content-end">
-									<div className="rounded" style={{ width: `${percentage}%`, height: 4, background: '#ddd' }}></div>
+									<div className="rounded" style={{ width: `${relativeWidth}%`, height: 4, background: '#ddd' }}></div>
 								</div>
 								<span className="d-inline-block text-dark mr-3">
 									<small className="align-text-top">{`${percentageForDisplay}%`}</small>
