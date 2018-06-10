@@ -65,7 +65,7 @@ class IndexPage extends Component {
 
 				? ( posts.length > 0
 
-					? <div className="bg-dark d-flex w-100 flex-wrap justify-content-center align-items-start">
+					? <div className="bg-dark d-flex w-100 flex-wrap justify-content-center align-items-start" style={{ minHeight: '100vh' }}>
 						<div className="bg-dark position-fixed py-5 d-flex align-items-center justify-content-between" style={{ left: 30, right: 30,  zIndex: 100 }}>
 							<Link prefetch replace passHref href="/post">
 								<button className="btn btn-info text-uppercase font-weight-bold" style={{ height: 40, borderRadius: 20, fontSize: '0.8rem', lineHeight: 1, width: 120 }}>New Post</button>
@@ -85,18 +85,20 @@ class IndexPage extends Component {
 						<div className="w-100 mt-5 py-5" style={{ maxWidth: 640 }}>
 							<div className="mt-5 pt-3">
 								{ posts.map((post, index) => {
-									return <Post key={index} user={user} people={people} post={post} />
+									return <Post key={index} user={activeUser} people={people} post={post} />
 								}) }
 							</div>
 						</div>
 					</div>
 
 					: <Fragment>
-						<h1 className="font-weight-light w-100 text-center mb-3">Realtime Twitter-Style Poll</h1>
+							<div className="position-absolute w-100 h-100 px-3 pb-5 d-flex flex-wrap align-items-center align-content-center justify-content-center" style={{ top: 0, bottom: 0 }}>
+								<h1 className="font-weight-light w-100 text-center mb-3">Realtime Twitter-Style Poll</h1>
 
-						<Link prefetch replace passHref href="/post">
-							<button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0" style={{ textDecoration: 'none', fontSize: '0.9rem' }}>New Post</button>
-						</Link>
+								<Link prefetch replace passHref href="/post">
+									<button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0" style={{ textDecoration: 'none', fontSize: '0.9rem' }}>New Post</button>
+								</Link>
+							</div>
 					</Fragment>
 				)
 

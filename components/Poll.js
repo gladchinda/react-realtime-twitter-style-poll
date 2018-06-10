@@ -56,8 +56,8 @@ const Poll = props => {
 								<div className="w-75 d-flex justify-content-end">
 									<div className="rounded" style={{ width: `${relativeWidth}%`, height: 4, background: '#ddd' }}></div>
 								</div>
-								<span className="d-inline-block text-dark mr-3">
-									<small className="align-text-top">{`${percentageForDisplay}%`}</small>
+								<span className="d-inline-block mr-3">
+									<small className="align-text-top" style={{ fontSize: '70%' }}>{`${percentageForDisplay}%`}</small>
 								</span>
 							</div>
 						</div>
