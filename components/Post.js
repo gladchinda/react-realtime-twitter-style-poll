@@ -82,6 +82,8 @@ class Post extends Component {
 			this.setState({ pollExpired, pollExpiresDisplay });
 		}, 1000), Math.max(1, expires - 60) * 1000);
 
+		const useHourlyTimer = Math.floor(this.postCreated.diff(moment()) / 1000) > (60 * 60);
+
 		const postCreatedDisplay = this.postCreated.fromNow(true)
 			.replace('a few seconds', 'just now')
 			.replace(/^an?/, '1')
@@ -89,7 +91,9 @@ class Post extends Component {
 
 		const data = { postCreatedDisplay, pollExpired, pollExpiresDisplay };
 
-		this.setState(data, () => this.timer = setTimeout(this.updatePostTimers, 60 * 1000));
+		this.setState(data, () => {
+			this.timer = setTimeout(this.updatePostTimers, (useHourlyTimer ? 60 : 1) * 60 * 1000);
+		});
 	}
 
 	componentWillUnmount() {
