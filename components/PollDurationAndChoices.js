@@ -63,12 +63,12 @@ class PollDurationAndChoices extends Component {
 
 							<input type="text" className="w-50 form-control position-relative" value={choice || ''} maxLength="50" placeholder={`Choice ${index + 1}`} onChange={this.updateChoice(index)} />
 
-							{ (index >= MIN_CHOICES_COUNT) && <button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0" onClick={this.removeChoice(index)} style={{ fontSize: '0.7rem', textDecoration: 'none' }}>Remove</button> }
+							{ (index >= MIN_CHOICES_COUNT) && <button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0 text--xsmall button--plain" onClick={this.removeChoice(index)}>Remove</button> }
 
 						</div>
 					)) }
 
-					{ canAddChoices && <button className="btn btn-link text-uppercase font-weight-bold mt-4 px-0" onClick={this.addChoice} style={{ fontSize: '0.8rem', textDecoration: 'none' }}>+ Add Choice</button> }
+					{ canAddChoices && <button className="btn btn-link text-uppercase font-weight-bold mt-4 px-0 text--small button--plain" onClick={this.addChoice}>+ Add Choice</button> }
 
 				</div>
 
@@ -78,7 +78,7 @@ class PollDurationAndChoices extends Component {
 						{ POLL_DURATIONS.map((duration, index) => {
 							const currentDuration = duration === this.state.duration;
 
-							return <button key={index} className={`btn mr-2 my-2 font-weight-bold ${currentDuration ? 'btn-primary' : 'btn-secondary'}`} disabled={currentDuration} style={{ height: 36, borderRadius: 18, fontSize: '0.75rem', lineHeight: 1, width: 75 }} onClick={this.updateDuration(duration)}>
+							return <button key={index} className={`btn mr-2 my-2 font-weight-bold button--duration ${currentDuration ? 'btn-primary' : 'btn-secondary'}`} disabled={currentDuration} onClick={this.updateDuration(duration)}>
 								{ duration % 60 ? `${duration} ${duration > 1 ? 'mins' : 'min'}` : `${duration / 60} hour` }
 							</button>
 						}) }

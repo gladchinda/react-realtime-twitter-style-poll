@@ -17,20 +17,16 @@ const PollResults = props => {
 			const percentageForDisplay = percentage.toFixed(1).replace(/^(\d+)\.0$/, '$1');
 
 			return (
-				<div key={index} className="py-2 d-flex align-items-center">
+				<div key={index} className="py-2 d-flex align-items-center poll-stat">
 
 					<span className="w-50 d-inline-block position-relative"><small>{choice}</small></span>
 
 					<div className="w-50 d-flex justify-content-between align-items-center">
 						<div className="w-75 d-flex justify-content-end">
-							<div className="rounded" style={{ width: `${relativeWidth}%`, height: 4, background: '#ddd' }}></div>
+							<div className="rounded poll-stat__vote-bar" style={{ width: `${relativeWidth}%` }}></div>
 						</div>
 
-						<span className="d-inline-block mr-3">
-							<small className="align-text-top" style={{ fontSize: '70%' }}>
-								{`${percentageForDisplay}%`}
-							</small>
-						</span>
+						<span className="d-inline-block text--xsmall mr-3">{ `${percentageForDisplay}%` }</span>
 					</div>
 
 				</div>

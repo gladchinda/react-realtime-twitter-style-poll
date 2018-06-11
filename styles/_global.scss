@@ -3,31 +3,29 @@
     top: 0;
     left: 0;
     &__ball {
+        $ball: &;
         height: 1rem;
         width: 1rem;
         border-radius: 0.5rem;
         background: rgba(0, 0, 0, 0.25);
-        @at-root {
-            $ball: &;
-            #{$loader}--small & {
-                height: 0.5rem;
-                width: 0.5rem;
-                border-radius: 0.25rem;
-            }
-            #{$loader}--light & {
-                background: rgba(255, 255, 255, 0.75);
-            }
-            &#{$ball}--1,
-            &#{$ball}--2,
-            &#{$ball}--3 {
-                animation: bulging 2s infinite ease-in-out;
-            }
-            &#{$ball}--1 {
-                animation-delay: -0.40s;
-            }
-            &#{$ball}--2 {
-                animation-delay: -0.20s;
-            }
+        #{$loader}--small & {
+            height: 0.5rem;
+            width: 0.5rem;
+            border-radius: 0.25rem;
+        }
+        #{$loader}--light & {
+            background: rgba(255, 255, 255, 0.75);
+        }
+        &#{$ball}--1,
+        &#{$ball}--2,
+        &#{$ball}--3 {
+            animation: bulging 2s infinite ease-in-out;
+        }
+        &#{$ball}--1 {
+            animation-delay: -0.40s;
+        }
+        &#{$ball}--2 {
+            animation-delay: -0.20s;
         }
     }
     @keyframes bulging {
@@ -44,8 +42,13 @@
     }
 }
 
-.text-small {
-    font-size: 80%;
+.text {
+    &--xsmall {
+        font-size: 70%;
+    }
+    &--small {
+        font-size: 80%;
+    }
 }
 
 .avatar {
@@ -68,4 +71,97 @@
     &__post-text {
         line-height: 1.5;
     }
+}
+
+.poll-stat {
+    &__vote-bar {
+        height: 4px;
+        background: #ddd;
+    }
+}
+
+.button {
+    $self: &;
+    &--rounded {
+        @extend .text--small;
+        height: 40px;
+        border-radius: 20px;
+        line-height: 1;
+        width: 120px;
+    }
+    &--plain {
+        line-height: 1;
+        text-decoration: none !important;
+    }
+    &--duration {
+        @extend #{$self}--rounded;
+        height: 36px;
+        border-radius: 18px;
+        width: 75px;
+    }
+    &--persona {
+        @extend #{$self}--rounded;
+        width: auto;
+        min-width: 75px;
+    }
+}
+
+.absolute {
+    &--full-height {
+        top: 0;
+        bottom: 0;
+    }
+}
+
+.max-w-640 {
+    max-width: 640px;
+}
+
+.min-w-560 {
+    min-width: auto;
+    width: 90% !important;
+    @media (min-width: 1024px) {
+        min-width: 560px;
+    }
+}
+
+.min-h-100 {
+    min-height: 100vh;
+}
+
+.topbar {
+    $self: &;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    &#{$self}--home {
+        padding: {
+            left: 30px;
+            right: 30px;
+        }
+        @media (min-width: 1024px) {
+            z-index: 0;
+        }
+    }
+    &#{$self}--post {
+        padding: {
+            left: 30px;
+            right: 30px;
+        }
+        @media (min-width: 1024px) {
+            padding: {
+                left: 25%;
+                right: 25%;
+            }
+        }
+    }
+}
+
+.post--textarea {
+    resize: none;
+    outline: none;
+    box-shadow: none;
+    border: none;
+    line-height: 1.4;
+    overflow: hidden;
 }

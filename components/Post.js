@@ -129,12 +129,12 @@ class Post extends Component {
 
 							<div className="d-flex align-items-center">
 								<span className="text-dark font-weight-bold">{ creator }</span>
-								<span className="d-inline-block text-secondary text-small font-weight-normal ml-2">
+								<span className="d-inline-block text-secondary text--small font-weight-normal ml-2">
 									{ `@${creator.toLowerCase()} ${DOT_SEPARATOR} ${postCreatedDisplay}` }
 								</span>
 							</div>
 
-							{ this.isPoll && <span className="d-flex align-items-center text-secondary text-small font-weight-normal ml-1 mr-3">
+							{ this.isPoll && <span className="d-flex align-items-center text-secondary text--small font-weight-normal ml-1 mr-3">
 								{ `${VOTES_DISPLAY} ${DOT_SEPARATOR} ${EXPIRES_DISPLAY}` }
 							</span> }
 
