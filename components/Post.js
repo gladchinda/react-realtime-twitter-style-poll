@@ -25,25 +25,44 @@ class Post extends Component {
 		this.timer && clearTimeout(this.timer);
 	}
 
-	updatePostState = () => {
+	getPollLifetimeData = () => {
 		const now = moment();
 		const { poll } = this.props.post;
+
+		let data = { pollExpired: false, pollExpiresDisplay: null, expires: null };
+
+		if (poll) {
+			const expiresMin = Math.max(0, this.pollExpires.diff(now, 'm'));
+			const expiresSec = Math.max(0, this.pollExpires.diff(now, 's'));
+
+			const pollExpired = this.pollExpires.isBefore();
+			const pollExpiresDisplay = (expiresSec < 60) ? `${expiresSec}s` : `${expiresMin}m`;
+
+			data = { ...data, pollExpired, pollExpiresDisplay, expires: expiresSec };
+		}
+
+		return data;
+	}
+
+	updatePostTimers = () => {
+		const { expires, pollExpired, pollExpiresDisplay } = this.getPollLifetimeData();
+		this.pollTimer && (expires === 0) && this.clearInterval(this.pollTimer);
+
+		if (!this.pollTimer && Math.ceil(expires / 60) <= 2) {
+			setTimeout(() => this.pollTimer = setInterval(() => {
+				const { pollExpired, pollExpiresDisplay } = this.getPollLifetimeData();
+				this.setState({ pollExpired, pollExpiresDisplay });
+			}, 1000), Math.max(1, expires - 60) * 1000);
+		}
 
 		const postCreatedDisplay = this.postCreated.fromNow(true)
 			.replace('a few seconds', 'just now')
 			.replace(/^an?/, '1')
 			.replace(/^(\d+) (.).+$/, `$1$2 ago`);
 
-		let data = { postCreatedDisplay };
+		const data = { postCreatedDisplay, pollExpired, pollExpiresDisplay };
 
-		if (poll) {
-			const pollExpired = this.pollExpires.isBefore();
-			const pollExpiresDisplay = `${this.pollExpires.diff(now, 'm')}m`;
-
-			data = { ...data, pollExpired, pollExpiresDisplay };
-		}
-
-		this.setState(data, () => this.timer = setTimeout(this.updatePostState, 60 * 1000));
+		this.setState(data, () => this.timer = setTimeout(this.updatePostTimers, 60 * 1000));
 	}
 
 	componentWillUnmount() {
@@ -51,7 +70,7 @@ class Post extends Component {
 	}
 
 	componentDidMount() {
-		this.updatePostState();
+		this.updatePostTimers();
 	}
 
 	render() {
@@ -73,8 +92,12 @@ class Post extends Component {
 				return stat;
 			}, []);
 
-			pollVotes = _range(0, choices.length).map(choice => voteCounts[choice] || 0);
-			totalVotes = pollVotes.reduce((sum, count) => sum + count, 0);
+			pollVotes = _range(0, choices.length).map(choice => ({
+				choice: choices[choice],
+				count: voteCounts[choice] || 0
+			}));
+
+			totalVotes = pollVotes.map(vote => vote.count).reduce((sum, count) => sum + count, 0);
 		}
 
 		return !(this.activeUser || this.postCreator) ? null : <Fragment>
@@ -109,7 +132,7 @@ class Post extends Component {
 						<div className="w-100 text-secondary pl-3 my-1" style={{ borderLeft: '1px solid #eee' }}>
 							<div className="h6 my-0 py-2 font-weight-normal" style={{ lineHeight: 1.5 }}>{ this.postContent }</div>
 							<div>
-								{ poll && <Poll user={this.activeUser} voted={userVoted} votes={pollVotes} expires={this.pollExpires} created={this.postCreated} post={post} /> }
+								{ poll && <Poll user={this.activeUser} voted={userVoted} votes={pollVotes} expires={this.pollExpires} post={post} /> }
 							</div>
 						</div>
 					</div>
