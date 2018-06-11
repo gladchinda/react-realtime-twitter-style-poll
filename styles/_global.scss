@@ -1,0 +1,43 @@
+.loader {
+    top: 0;
+    left: 0;
+
+    .ball {
+        height: 1rem;
+        width: 1rem;
+        border-radius: 0.5rem;
+        background: rgba(0, 0, 0, 0.25);
+        animation: bulging 2s infinite ease-in-out;
+    }
+
+    &-small .ball {
+        height: 0.5rem;
+        width: 0.5rem;
+        border-radius: 0.25rem;
+    }
+
+    &-light .ball {
+        background: rgba(255, 255, 255, 0.75);
+    }
+
+    .ball.ball-1 {
+        animation-delay: -0.40s;
+    }
+
+    .ball.ball-2 {
+        animation-delay: -0.20s;
+    }
+
+    @keyframes bulging {
+        0%,
+        80%,
+        100% {
+            transform: scale(0);
+            opacity: 0.5;
+        }
+        40% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+}
