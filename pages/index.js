@@ -91,9 +91,16 @@ class IndexPage extends Component {
 
 						<div className="w-100 mt-5 py-5 max-w-640">
 							<div className="mt-5 pt-3">
-								{ posts.map((post, index) => {
-									return <Post key={index} user={activeUser} people={people} post={post} />
-								}) }
+								{
+									posts.sort((a, b) => {
+										a = +a.created;
+										b = +b.created;
+										return (a > b) ? -1 : (a < b) ? 1 : 0;
+									})
+									.map((post, index) => {
+										return <Post key={index} user={activeUser} people={people} post={post} />
+									})
+								}
 							</div>
 						</div>
 					</div>
