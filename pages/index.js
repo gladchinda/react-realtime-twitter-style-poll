@@ -82,8 +82,8 @@ class IndexPage extends Component {
 
 							<div className="d-flex align-items-center">
 								<h2 className="mb-0 h5 font-weight-bold text-white mr-3">{activeUser.name}</h2>
-								<div className="rounded-circle bg-light d-flex justify-content-center align-items-center" style={{ width: 50, height: 50 }}>
-									<img className="rounded img-fluid" src={activeUser.avatar} alt={activeUser.name} title={activeUser.name} />
+								<div className="rounded-circle bg-light d-flex justify-content-center align-items-center avatar avatar--user">
+									<img className="rounded-circle img-fluid" src={activeUser.avatar} alt={activeUser.name} title={activeUser.name} />
 								</div>
 							</div>
 
