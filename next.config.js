@@ -1,7 +1,9 @@
 const webpack = require('webpack');
+const withSass = require('@zeit/next-sass');
+
 require('dotenv').config();
 
-module.exports = {
+module.exports = withSass({
 	webpack: config => {
 		const env = Object.keys(process.env).reduce((acc, curr) => {
 			acc[`process.env.${curr}`] = JSON.stringify(process.env[curr]);
@@ -12,4 +14,4 @@ module.exports = {
 
 		return config;
 	}
-};
+});
