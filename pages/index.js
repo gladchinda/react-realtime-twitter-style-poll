@@ -1,19 +1,23 @@
 import '../styles/_global.scss';
 import axios from 'axios';
-import Link from 'next/link';
 import Pusher from 'pusher-js';
 import React, { Component, Fragment } from 'react';
 import * as Session from '../helpers/session';
 
 import Post from '../components/Post';
 import Loader from '../components/Loader';
+import NewPost from '../components/NewPost';
 import ChoosePersona from '../components/ChoosePersona';
 
 class IndexPage extends Component {
 
-	state = { user: null, people: [], posts: [], loading: true }
+	state = { user: null, people: [], posts: [], loading: true, creatingPost: false }
 
 	personaSelected = user => this.setState({ user }, () => Session.initializeSession(user))
+
+	createNewPost = () => this.setState({ creatingPost: true })
+
+	terminateNewPost = () => this.setState({ creatingPost: false })
 
 	componentDidMount() {
 		const user = Session.getActiveUser();
@@ -58,14 +62,22 @@ class IndexPage extends Component {
 
 	render() {
 
-		const { user = null, posts, people, loading } = this.state;
 		let activeUser = null;
+		const { user = null, posts, people, loading, creatingPost } = this.state;
 
 		if (people && user) {
 			activeUser = people.find(person => person.id === user);
 		}
 
 		if (loading) return <Loader />
+
+		if (activeUser && creatingPost) {
+			return (
+				<div className="container-fluid position-absolute h-100 absolute--full-height">
+					<NewPost user={activeUser.id} onTerminatePost={this.terminateNewPost} />
+				</div>
+			)
+		}
 
 		return <Fragment>
 			{ activeUser
@@ -74,9 +86,7 @@ class IndexPage extends Component {
 
 					? <div className="bg-dark d-flex w-100 flex-wrap justify-content-center align-items-start min-h-100">
 						<div className="bg-dark position-fixed py-5 d-flex align-items-center justify-content-between topbar topbar--home">
-							<Link prefetch replace passHref href="/post">
-								<button className="btn btn-info text-uppercase font-weight-bold button--rounded">New Post</button>
-							</Link>
+							<button className="btn btn-info text-uppercase font-weight-bold button--rounded" onClick={this.createNewPost}>New Post</button>
 
 							{/* <h1 className="text-white font-weight-light text-center h2 d-none d-md-block">Realtime Poll</h1> */}
 

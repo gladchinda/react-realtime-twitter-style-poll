@@ -1,6 +1,4 @@
 import axios from 'axios';
-import Link from 'next/link';
-import Router from 'next/router';
 import React, { Component, Fragment } from 'react';
 import Loader from './Loader';
 import PollDurationAndChoices from './PollDurationAndChoices';
@@ -26,6 +24,11 @@ class NewPost extends Component {
 		this.setState({ poll: { ...currentPoll, duration, choices } });
 	}
 
+	terminatePost = () => {
+		const { onTerminatePost = f => f } = this.props;
+		onTerminatePost();
+	}
+
 	canSubmit = () => {
 		const { hasPoll, post, poll: { duration, choices } } = this.state;
 		const canSubmitPoll = duration && choices && (choices.filter(choice => !choice).length === 0);
@@ -40,7 +43,8 @@ class NewPost extends Component {
 		this.setState({ loading: true });
 
 		axios.post(`/api/posts`, data)
-			.then(response => this.setState({ loading: false }, () => Router.replace('/')));
+			.then(response => this.setState({ loading: false }, this.terminatePost))
+			.catch(() => this.setState({ loading: false }));
 	}
 
 	componentDidMount() {
@@ -65,9 +69,7 @@ class NewPost extends Component {
 					<h1 className="h3 font-weight-bold mb-0 text-dark d-none d-sm-block">{`New ${type}`}</h1>
 
 					<div className="position-absolute h-100 w-100 d-flex align-items-center justify-content-between topbar topbar--post">
-						<Link prefetch replace passHref href="/">
-							<button className={plainButtonClass}>All Posts</button>
-						</Link>
+						<button className={plainButtonClass} onClick={this.terminatePost}>All Posts</button>
 
 						<div className="text-center">
 							<button className={`${plainButtonClass}${hasPoll ? ' text-danger' : ''}`} onClick={this.togglePoll}>{pollButtonText}</button>
