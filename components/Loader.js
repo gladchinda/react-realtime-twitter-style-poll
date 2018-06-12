@@ -10,9 +10,9 @@ const Loader = props => {
 	].join(' ').trim().replace(/\s+/g, ' ');
 
 	return <div className={loaderClass}>
-		<span className="loader__ball loader__ball--1 d-inline-block mx-1"></span>
-		<span className="loader__ball loader__ball--2 d-inline-block mx-1"></span>
-		<span className="loader__ball loader__ball--3 d-inline-block mx-1"></span>
+		<span className="loader__ball loader__ball--1 d-inline-block mx-1" />
+		<span className="loader__ball loader__ball--2 d-inline-block mx-1" />
+		<span className="loader__ball loader__ball--3 d-inline-block mx-1" />
 	</div>
 }
 
