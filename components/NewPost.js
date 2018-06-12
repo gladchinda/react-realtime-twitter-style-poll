@@ -78,8 +78,8 @@ class NewPost extends Component {
 
 				</div>
 
-				<div className="d-flex position-relative h-100 w-50 mx-auto flex-wrap justify-content-center align-items-center align-content-center min-w-560 max-w-640">
-					<div className="d-flex w-100 position-relative flex-wrap justify-content-center align-items-start align-content-start">
+				<div className="d-flex position-relative h-100 w-50 mx-auto flex-wrap justify-content-center align-items-center align-content-center min-w-560 max-w-640 new-post-container">
+					<div className="d-flex w-100 py-5 position-relative flex-wrap justify-content-center align-items-start align-content-start">
 
 						<div className="w-100 mb-3">
 							<textarea ref={e => this.post = e} className="border-bottom border-gray w-100 h3 px-3 py-2 font-weight-normal post--textarea" placeholder={placeholder} value={post} rows="1" onChange={this.handlePostUpdate} style={{ height: postHeight }} />
