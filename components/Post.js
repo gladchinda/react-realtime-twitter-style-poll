@@ -22,8 +22,9 @@ class Post extends Component {
 		this.state = { postCreatedDisplay: null, pollExpiresDisplay: null, pollExpired: false };
 	}
 
-	resetTimer = () => {
+	resetTimers = () => {
 		this.timer && clearTimeout(this.timer);
+		this.pollTimer && clearInterval(this.pollTimer);
 	}
 
 	getVotesData = () => {
@@ -73,7 +74,7 @@ class Post extends Component {
 
 	updatePostTimers = () => {
 		const { expires, pollExpired, pollExpiresDisplay } = this.getPollLifetimeData();
-		this.pollTimer && (expires === 0) && this.clearInterval(this.pollTimer);
+		this.pollTimer && (expires === 0) && clearInterval(this.pollTimer);
 
 		const activateTimer = !this.pollTimer && Math.ceil(expires / 60) <= 2;
 
@@ -97,7 +98,7 @@ class Post extends Component {
 	}
 
 	componentWillUnmount() {
-		this.resetTimer();
+		this.resetTimers();
 	}
 
 	componentDidMount() {
