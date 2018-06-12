@@ -117,9 +117,7 @@ class IndexPage extends Component {
 							<div className="position-absolute w-100 h-100 px-3 pb-5 d-flex flex-wrap align-items-center align-content-center justify-content-center absolute--full-height">
 								<h1 className="font-weight-light w-100 text-center mb-3">Realtime Poll</h1>
 
-								<Link prefetch replace passHref href="/post">
-									<button className="btn btn-info text-uppercase font-weight-bold button--rounded">New Post</button>
-								</Link>
+								<button className="btn btn-info text-uppercase font-weight-bold button--rounded" onClick={this.createNewPost}>New Post</button>
 							</div>
 					</Fragment>
 				)
