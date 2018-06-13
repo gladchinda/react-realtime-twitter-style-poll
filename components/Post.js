@@ -34,6 +34,7 @@ class Post extends Component {
 		let userVoted = false;
 		let pollVotes = null;
 		let totalVotes = 0;
+		let votedChoice = null;
 
 		if (this.isPoll) {
 			const voteCounts = votes.reduce((stat, vote) => {
@@ -42,7 +43,12 @@ class Post extends Component {
 				return stat;
 			}, []);
 
-			userVoted = !!(votes.find(vote => vote.user === this.activeUser.id));
+			const userIndex = votes.findIndex(vote => vote.user === this.activeUser.id);
+
+			if (userIndex >= 0) {
+				userVoted = true;
+				votedChoice = votes[userIndex].choice;
+			}
 
 			pollVotes = _range(0, choices.length).map(choice => ({
 				choice: choices[choice],
@@ -52,7 +58,7 @@ class Post extends Component {
 			totalVotes = pollVotes.map(vote => vote.count).reduce((sum, count) => sum + count, 0);
 		}
 
-		return { userVoted, pollVotes, totalVotes };
+		return { userVoted, pollVotes, totalVotes, votedChoice };
 	}
 
 	getPollLifetimeData = () => {
@@ -113,7 +119,7 @@ class Post extends Component {
 		const { postCreatedDisplay, pollExpiresDisplay, pollExpired } = this.state;
 
 		const { name: creator, avatar } = this.postCreator;
-		const { userVoted, pollVotes, totalVotes } = this.getVotesData();
+		const { userVoted, votedChoice, pollVotes, totalVotes } = this.getVotesData();
 
 		const DOT_SEPARATOR = String.fromCharCode(8226);
 
@@ -149,7 +155,7 @@ class Post extends Component {
 
 							<div className="h6 w-100 my-0 py-2 font-weight-normal post-item__post-text">{ this.postContent }</div>
 
-							{ this.isPoll && <Poll user={this.activeUser} post={post} voted={userVoted} votes={pollVotes} expires={this.pollExpires} /> }
+							{ this.isPoll && <Poll user={this.activeUser} post={post} voted={userVoted} votedChoice={votedChoice} votes={pollVotes} expires={this.pollExpires} /> }
 
 						</div>
 
