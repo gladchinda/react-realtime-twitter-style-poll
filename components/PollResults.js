@@ -19,14 +19,14 @@ const PollResults = props => {
 			const percentageForDisplay = percentage.toFixed(1).replace(/^(\d+)\.0$/, '$1');
 
 			const choiceClass = [
-				'w-50 d-inline-block position-relative',
+				'w-50 d-inline-block position-relative text--small',
 				(+VOTED_CHOICE === index) ? 'font-weight-bold text-dark' : ''
 			].join(' ').trim().replace(/\s+/g, ' ');
 
 			return (
 				<div key={index} className="py-2 d-flex align-items-center poll-stat">
 
-					<span className={choiceClass}><small>{choice}</small></span>
+					<span className={choiceClass}>{choice}</span>
 
 					<div className="w-50 d-flex justify-content-between align-items-center">
 						<div className="w-75 d-flex justify-content-end">
