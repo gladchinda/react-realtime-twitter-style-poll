@@ -92,7 +92,12 @@ app.prepare()
 			}
 
 			const hasDuration = duration && _.isNumber(duration);
-			const hasChoices = choices && _.isArray(choices) && choices.length >= 2;
+
+			const hasChoices = choices
+				&& _.isArray(choices)
+				&& choices.length >= 2
+				&& choices.length <= 4
+				&& (choices.filter(_.isString).length === choices.length);
 
 			if (poll && !( hasDuration && hasChoices )) {
 				return res.status(422).json({ status: 'failed', message: 'Invalid poll content.' });
