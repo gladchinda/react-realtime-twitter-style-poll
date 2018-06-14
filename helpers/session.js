@@ -1,8 +1,8 @@
 import moment from 'moment';
 
-const USER_STORAGE_KEY = '__app.user__';
-const USER_SESSION_KEY = '__app.expires__';
-const USER_SESSION_DURATION_SECONDS = 60 * 15; // 15 mins
+export const USER_STORAGE_KEY = '__app.user__';
+export const USER_SESSION_KEY = '__app.expires__';
+export const USER_SESSION_DURATION_SECONDS = 60 * 15; // 15 mins
 
 export const initializeSession = user => {
 	const expires = `${moment().add(USER_SESSION_DURATION_SECONDS, 's').format('x')}`;

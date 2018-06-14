@@ -79,26 +79,32 @@ class Post extends Component {
 	}
 
 	updatePostTimers = () => {
+		const now = moment();
 		const { expires, pollExpired, pollExpiresDisplay } = this.getPollLifetimeData();
+
 		this.pollTimer && (expires === 0) && clearInterval(this.pollTimer);
 
-		const activateTimer = !this.pollTimer && Math.ceil(expires / 60) <= 2;
+		const activatePollTimer = !this.pollTimer && (expires / 60 <= 2);
 
-		activateTimer	&& setTimeout(() => this.pollTimer = setInterval(() => {
+		activatePollTimer	&& setTimeout(() => this.pollTimer = setInterval(() => {
 			const { pollExpired, pollExpiresDisplay } = this.getPollLifetimeData();
 			this.setState({ pollExpired, pollExpiresDisplay });
 		}, 1000), Math.max(1, expires - 60) * 1000);
 
-		const useHourlyTimer = Math.floor(this.postCreated.diff(moment()) / 1000) > (60 * 60);
+		const useHourlyTimer = Math.floor(now.diff(this.postCreated) / 1000) > (60 * 60);
+		const showDateInstead = now.diff(this.postCreated, 'd') >= 2;
 
-		const postCreatedDisplay = this.postCreated.fromNow(true)
-			.replace('a few seconds', 'just now')
-			.replace(/^an?/, '1')
-			.replace(/^(\d+) (.).+$/, `$1$2 ago`);
+		const postCreatedDisplay = showDateInstead
+			? this.postCreated.format('MMM D')
+			: this.postCreated.fromNow(true)
+				.replace('a few seconds', 'just now')
+				.replace(/^an?/, '1')
+				.replace(/^(\d+) (.).+$/, `$1$2 ago`)
+				.replace('1d ago', 'yesterday');
 
 		const data = { postCreatedDisplay, pollExpired, pollExpiresDisplay };
 
-		this.setState(data, () => {
+		!(pollExpired && showDateInstead) && this.setState(data, () => {
 			this.timer = setTimeout(this.updatePostTimers, (useHourlyTimer ? 60 : 1) * 60 * 1000);
 		});
 	}

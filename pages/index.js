@@ -13,6 +13,11 @@ class IndexPage extends Component {
 
 	state = { user: null, people: [], posts: [], loading: true, creatingPost: false }
 
+	resolveUserFromSession = () => {
+		const user = Session.getActiveUser();
+		this.setState({ user: user || null });
+	}
+
 	personaSelected = user => this.setState({ user }, () => Session.initializeSession(user))
 
 	createNewPost = () => this.setState({ creatingPost: true })
@@ -20,8 +25,7 @@ class IndexPage extends Component {
 	terminateNewPost = () => this.setState({ creatingPost: false })
 
 	componentDidMount() {
-		const user = Session.getActiveUser();
-		user && this.setState({ user });
+		this.resolveUserFromSession();
 
 		this.pusher = new Pusher(process.env.PUSHER_APP_KEY, {
 			cluster: process.env.PUSHER_APP_CLUSTER,
@@ -58,6 +62,7 @@ class IndexPage extends Component {
 
 	componentWillUnmount() {
 		this.pusher.disconnect();
+		this.timer && clearTimeout(this.timer);
 	}
 
 	render() {
