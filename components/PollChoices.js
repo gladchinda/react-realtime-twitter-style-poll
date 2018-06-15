@@ -24,9 +24,7 @@ class PollChoices extends Component {
 
 				const POSTID = `poll-response--radio--${postID}--${index}`;
 
-				const labelClass = [
-					'custom-control-label pl-4 position-relative'
-				].join(' ');
+				const labelClass = 'custom-control-label pl-4 position-relative';
 
 				return (
 					<div key={index} className="custom-control custom-radio px-0 py-2 d-flex align-items-center">

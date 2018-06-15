@@ -22,11 +22,6 @@ class Post extends Component {
 		this.state = { postCreatedDisplay: null, pollExpiresDisplay: null, pollExpired: false };
 	}
 
-	resetTimers = () => {
-		this.timer && clearTimeout(this.timer);
-		this.pollTimer && clearInterval(this.pollTimer);
-	}
-
 	getVotesData = () => {
 		const { post } = this.props;
 		const { votes, choices } = post;
@@ -109,23 +104,33 @@ class Post extends Component {
 		});
 	}
 
-	componentWillUnmount() {
-		this.resetTimers();
+	resetTimers = () => {
+		this.timer && clearTimeout(this.timer);
+		this.pollTimer && clearInterval(this.pollTimer);
 	}
 
 	componentDidMount() {
 		this.updatePostTimers();
 	}
 
-	render() {
+	componentWillUnmount() {
+		this.resetTimers();
+	}
 
-		if (!(this.activeUser || this.postCreator)) return null;
-
-		const { post } = this.props;
-		const { postCreatedDisplay, pollExpiresDisplay, pollExpired } = this.state;
-
+	renderPostCreatorAvatar = () => {
 		const { name: creator, avatar } = this.postCreator;
-		const { userVoted, votedChoice, pollVotes, totalVotes } = this.getVotesData();
+
+		return (
+			<div className="rounded-circle bg-light d-flex justify-content-center align-items-center avatar avatar--post">
+				<img className="rounded-circle img-fluid" src={avatar} alt={creator} title={creator} />
+			</div>
+		)
+	}
+
+	renderPostHeader = () => {
+		const { name: creator } = this.postCreator;
+		const { totalVotes } = this.getVotesData();
+		const { postCreatedDisplay, pollExpiresDisplay, pollExpired } = this.state;
 
 		const DOT_SEPARATOR = String.fromCharCode(8226);
 
@@ -133,29 +138,41 @@ class Post extends Component {
 		const EXPIRES_DISPLAY = `${pollExpired ? 'Poll ended' : `${pollExpiresDisplay} left`}`;
 
 		return (
+			<div className="w-100 my-2 h6 d-flex justify-content-between align-items-center">
+
+				<div className="d-flex align-items-center">
+					<span className="text-dark font-weight-bold">{creator}</span>
+					<span className="d-inline-block text-secondary text--small font-weight-normal ml-2">
+						{`@${creator.toLowerCase()} ${DOT_SEPARATOR} ${postCreatedDisplay}`}
+					</span>
+				</div>
+
+				{ this.isPoll && (
+					<span className="d-flex align-items-center text-secondary text--small font-weight-normal ml-1 mr-3">
+						{`${VOTES_DISPLAY} ${DOT_SEPARATOR} ${EXPIRES_DISPLAY}`}
+					</span>
+				) }
+
+			</div>
+		)
+	}
+
+	render() {
+
+		if (!(this.activeUser || this.postCreator)) return null;
+
+		const { post } = this.props;
+		const { userVoted, votedChoice, pollVotes } = this.getVotesData();
+
+		return (
 			<div className="bg-white rounded border border-gray w-100 position-relative p-3 mb-4">
 				<div className="w-100 d-flex align-items-start justify-content-between">
 
-					<div className="rounded-circle bg-light d-flex justify-content-center align-items-center avatar avatar--post">
-						<img className="rounded-circle img-fluid" src={avatar} alt={creator} title={creator} />
-					</div>
+					{ this.renderPostCreatorAvatar() }
 
 					<div className="d-flex flex-wrap align-items-start align-content-start pl-3 post-item">
 
-						<div className="w-100 my-2 h6 d-flex justify-content-between align-items-center">
-
-							<div className="d-flex align-items-center">
-								<span className="text-dark font-weight-bold">{ creator }</span>
-								<span className="d-inline-block text-secondary text--small font-weight-normal ml-2">
-									{ `@${creator.toLowerCase()} ${DOT_SEPARATOR} ${postCreatedDisplay}` }
-								</span>
-							</div>
-
-							{ this.isPoll && <span className="d-flex align-items-center text-secondary text--small font-weight-normal ml-1 mr-3">
-								{ `${VOTES_DISPLAY} ${DOT_SEPARATOR} ${EXPIRES_DISPLAY}` }
-							</span> }
-
-						</div>
+						{ this.renderPostHeader() }
 
 						<div className="w-100 text-secondary pl-3 my-1 post-item__post-content">
 

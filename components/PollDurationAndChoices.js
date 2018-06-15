@@ -49,42 +49,53 @@ class PollDurationAndChoices extends Component {
 		onPollUpdated(currentState);
 	}
 
-	render() {
-		const { choices } = this.state;
+	renderPollChoicesInputs = choices => {
 		const canAddChoices = choices.length < MAX_CHOICES_COUNT;
 
 		return (
-			<div className="d-flex flex-wrap justify-content-start w-100">
+			<div className="mb-5 w-100">
 
-				<div className="mb-5 w-100">
+				{choices.map((choice, index) => (
+					<div key={index} className="w-100 py-2 d-flex justify-content-start">
 
-					{ choices.map((choice, index) => (
-						<div key={index} className="w-100 py-2 d-flex justify-content-start">
+						<input type="text" className="w-50 form-control position-relative" value={choice || ''} maxLength="50" placeholder={`Choice ${index + 1}`} onChange={this.updateChoice(index)} />
 
-							<input type="text" className="w-50 form-control position-relative" value={choice || ''} maxLength="50" placeholder={`Choice ${index + 1}`} onChange={this.updateChoice(index)} />
+						{(index >= MIN_CHOICES_COUNT) && <button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0 text--xsmall button--plain" onClick={this.removeChoice(index)}>Remove</button>}
 
-							{ (index >= MIN_CHOICES_COUNT) && <button className="btn btn-link text-uppercase font-weight-bold ml-3 px-0 text--xsmall button--plain" onClick={this.removeChoice(index)}>Remove</button> }
-
-						</div>
-					)) }
-
-					{ canAddChoices && <button className="btn btn-link text-uppercase font-weight-bold mt-4 px-0 text--small button--plain" onClick={this.addChoice}>+ Add Choice</button> }
-
-				</div>
-
-				<div className="w-100 border-top border-bottom py-4 border-gray d-flex justify-content-between align-items-center">
-					<span className="font-weight-bold text-uppercase text-secondary mx-2">Duration</span>
-					<div className="mx-2">
-						{ POLL_DURATIONS.map((duration, index) => {
-							const currentDuration = duration === this.state.duration;
-
-							return <button key={index} className={`btn mr-2 my-2 font-weight-bold button--duration ${currentDuration ? 'btn-primary' : 'btn-secondary'}`} disabled={currentDuration} onClick={this.updateDuration(duration)}>
-								{ duration % 60 ? `${duration} ${duration > 1 ? 'mins' : 'min'}` : `${duration / 60} hour` }
-							</button>
-						}) }
 					</div>
+				))}
+
+				{canAddChoices && <button className="btn btn-link text-uppercase font-weight-bold mt-4 px-0 text--small button--plain" onClick={this.addChoice}>+ Add Choice</button>}
+
+			</div>
+		)
+	}
+
+	renderPollDurationOptions = () => {
+		return (
+			<div className="w-100 border-top border-bottom py-4 border-gray d-flex justify-content-between align-items-center">
+
+				<span className="font-weight-bold text-uppercase text-secondary mx-2">Duration</span>
+
+				<div className="mx-2">
+					{POLL_DURATIONS.map((duration, index) => {
+						const currentDuration = duration === this.state.duration;
+
+						return <button key={index} className={`btn mr-2 my-2 font-weight-bold button--duration ${currentDuration ? 'btn-primary' : 'btn-secondary'}`} disabled={currentDuration} onClick={this.updateDuration(duration)}>
+							{duration % 60 ? `${duration} ${duration > 1 ? 'mins' : 'min'}` : `${duration / 60} hour`}
+						</button>
+					})}
 				</div>
 
+			</div>
+		)
+	}
+
+	render() {
+		return (
+			<div className="d-flex flex-wrap justify-content-start w-100">
+				{ this.renderPollChoicesInputs(this.state.choices) }
+				{ this.renderPollDurationOptions() }
 			</div>
 		)
 	}

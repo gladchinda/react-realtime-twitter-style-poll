@@ -18,6 +18,12 @@ class IndexPage extends Component {
 		this.setState({ user: user || null });
 	}
 
+	sortPostsByRecentFirst = posts => posts.sort((a, b) => {
+		a = +a.created;
+		b = +b.created;
+		return (a > b) ? -1 : (a < b) ? 1 : 0;
+	})
+
 	personaSelected = user => this.setState({ user }, () => Session.initializeSession(user))
 
 	createNewPost = () => this.setState({ creatingPost: true })
@@ -35,11 +41,11 @@ class IndexPage extends Component {
 		this.channel = this.pusher.subscribe('twitter-poll-app');
 
 		this.channel.bind('new-post', ({ post }) => {
-			const posts = [ ...this.state.posts, post ];
-			this.setState({ posts });
+			const posts = [ post, ...this.state.posts ];
+			this.setState({ posts: this.sortPostsByRecentFirst(post) });
 		});
 
-		this.channel.bind('new-vote', ({ posts }) => this.setState({ posts }));
+		this.channel.bind('new-vote', ({ posts }) => this.setState({ posts: this.sortPostsByRecentFirst(posts) }));
 
 		this.pusher.connection.bind('connected', () => {
 
@@ -53,7 +59,7 @@ class IndexPage extends Component {
 
 				axios.get('/api/posts').then(({ data }) => {
 					const { posts = [] } = data;
-					this.setState({ posts });
+					this.setState({ posts: this.sortPostsByRecentFirst(posts) });
 				})
 			]).then(() => { this.setState({ loading: false }) });
 
@@ -62,8 +68,35 @@ class IndexPage extends Component {
 
 	componentWillUnmount() {
 		this.pusher.disconnect();
-		this.timer && clearTimeout(this.timer);
 	}
+
+	renderUserAvatarAndName = user => {
+		const { name = null, avatar = null } = user || {};
+
+		return (
+			<div className="d-flex align-items-center">
+				<h2 className="mb-0 h5 font-weight-bold text-white mr-3">{name}</h2>
+				<div className="rounded-circle bg-light d-flex justify-content-center align-items-center avatar avatar--user">
+					<img className="rounded-circle img-fluid" src={avatar} alt={name} title={name} />
+				</div>
+			</div>
+		)
+	}
+
+	renderNewPostButton = () => {
+		const btnClass = 'btn btn-info text-uppercase font-weight-bold button--rounded';
+		return <button className={btnClass} onClick={this.createNewPost}>New Post</button>
+	}
+
+	renderNewPost = user => (
+		<div className="container-fluid position-absolute h-100 absolute--full-height">
+			<NewPost user={user.id} onTerminatePost={this.terminateNewPost} />
+		</div>
+	)
+
+	renderPosts = (user, people) => posts => posts.map((post, index) => (
+		<Post key={index} user={user} people={people} post={post} />
+	))
 
 	render() {
 
@@ -76,13 +109,7 @@ class IndexPage extends Component {
 
 		if (loading) return <Loader />
 
-		if (activeUser && creatingPost) {
-			return (
-				<div className="container-fluid position-absolute h-100 absolute--full-height">
-					<NewPost user={activeUser.id} onTerminatePost={this.terminateNewPost} />
-				</div>
-			)
-		}
+		if (activeUser && creatingPost) return this.renderNewPost(activeUser);
 
 		return <Fragment>
 			{ activeUser
@@ -91,38 +118,19 @@ class IndexPage extends Component {
 
 					? <div className="bg-dark d-flex w-100 flex-wrap justify-content-center align-items-start min-h-100">
 						<div className="bg-dark position-fixed py-5 d-flex align-items-center justify-content-between topbar topbar--home">
-							<button className="btn btn-info text-uppercase font-weight-bold button--rounded" onClick={this.createNewPost}>New Post</button>
-
-							{/* <h1 className="text-white font-weight-light text-center h2 d-none d-md-block">Realtime Poll</h1> */}
-
-							<div className="d-flex align-items-center">
-								<h2 className="mb-0 h5 font-weight-bold text-white mr-3">{activeUser.name}</h2>
-								<div className="rounded-circle bg-light d-flex justify-content-center align-items-center avatar avatar--user">
-									<img className="rounded-circle img-fluid" src={activeUser.avatar} alt={activeUser.name} title={activeUser.name} />
-								</div>
-							</div>
-
+							{ this.renderNewPostButton() }
+							{ this.renderUserAvatarAndName(activeUser) }
 						</div>
 
 						<div className="w-100 py-5 max-w-640 posts-container">
-							{
-								posts.sort((a, b) => {
-									a = +a.created;
-									b = +b.created;
-									return (a > b) ? -1 : (a < b) ? 1 : 0;
-								})
-								.map((post, index) => {
-									return <Post key={index} user={activeUser} people={people} post={post} />
-								})
-							}
+							{ this.renderPosts(activeUser, people)(posts) }
 						</div>
 					</div>
 
 					: <Fragment>
 							<div className="position-absolute w-100 h-100 px-3 pb-5 d-flex flex-wrap align-items-center align-content-center justify-content-center absolute--full-height">
 								<h1 className="font-weight-light w-100 text-center mb-3">Realtime Poll</h1>
-
-								<button className="btn btn-info text-uppercase font-weight-bold button--rounded" onClick={this.createNewPost}>New Post</button>
+								{ this.renderNewPostButton() }
 							</div>
 					</Fragment>
 				)
@@ -131,6 +139,7 @@ class IndexPage extends Component {
 			}
 		</Fragment>
 	}
+
 }
 
 export default () => (
